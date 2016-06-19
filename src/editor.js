@@ -1,7 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Codemirror = require('react-codemirror');
-var esprima = require('esprima');
 require('codemirror/mode/javascript/javascript');
 
 var App = React.createClass({
@@ -10,12 +9,19 @@ var App = React.createClass({
       code: '// Code'
     };
   },
+  componentDidMount: function() {
+    this.a = new Worker('worker.js');
+    this.a.onmessage = (b) => {
+      console.log('PARSED: ', b, JSON.parse(b.data))
+      this.setState({
+        feedback: b.data
+      });
+    };
+  },
   updateCode: function(newCode) {
-    console.log(esprima.parse(newCode));
-    console.log(esprima.tokenize(newCode));
+    this.a.postMessage('Hello there');
     this.setState({
       code: newCode,
-      feedback: 'Feedback'
     });
   },
   render: function() {
