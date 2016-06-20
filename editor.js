@@ -56,7 +56,7 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(39);
 	var Codemirror = __webpack_require__(169);
-	__webpack_require__(175);
+	__webpack_require__(173);
 
 	var App = React.createClass({
 	  displayName: 'App',
@@ -71,14 +71,15 @@
 
 	    this.a = new Worker('worker.js');
 	    this.a.onmessage = function (b) {
-	      console.log('PARSED: ', b, JSON.parse(b.data));
+	      console.log('PARSED: ', Date.now(), JSON.parse(b.data));
 	      _this.setState({
 	        feedback: b.data
 	      });
 	    };
 	  },
 	  updateCode: function updateCode(newCode) {
-	    this.a.postMessage('Hello there');
+	    console.log('NEW CODE: ', newCode, JSON.stringify(newCode));
+	    this.a.postMessage(newCode);
 	    this.setState({
 	      code: newCode
 	    });
@@ -29853,9 +29854,7 @@
 
 
 /***/ },
-/* 173 */,
-/* 174 */,
-/* 175 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others

@@ -12,14 +12,15 @@ var App = React.createClass({
   componentDidMount: function() {
     this.a = new Worker('worker.js');
     this.a.onmessage = (b) => {
-      console.log('PARSED: ', b, JSON.parse(b.data))
+      console.log('PARSED: ', Date.now(), JSON.parse(b.data))
       this.setState({
         feedback: b.data
       });
     };
   },
   updateCode: function(newCode) {
-    this.a.postMessage('Hello there');
+    console.log('NEW CODE: ', newCode, JSON.stringify(newCode));
+    this.a.postMessage(newCode);
     this.setState({
       code: newCode,
     });

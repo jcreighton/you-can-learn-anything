@@ -1,6 +1,6 @@
 importScripts('esprima.js'); 
 
-self.addEventListener('message', function(e) {
-  
-  self.postMessage(JSON.stringify(esprima.parse('var a = 2;')));
+self.addEventListener('message', function(code) {
+  var parsedCode = esprima.parse(code.data);
+  self.postMessage(JSON.stringify(parsedCode));
 }, false);
