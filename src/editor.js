@@ -1,28 +1,24 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
 var Codemirror = require('react-codemirror');
-var Feedback = require('./feedback');
 require('codemirror/mode/javascript/javascript');
+var Test = require('./test');
 
-var App = React.createClass({
+var Editor = React.createClass({
   getInitialState: function() {
     return {
-      code: '// Code',
-      feedback: []
+      code: '// Let\'s build something new!'
     };
   },
   componentDidMount: function() {
     this.test = new Test({
-      blacklist: ['WhileStatement', 'IfStatement'],
-      whitelist: ['ForStatement', 'VariableDeclaration'],
-      structure: null
+      blacklist: this.props.blacklist,
+      whitelist: this.props.whitelist,
+      structure: this.props.structure
     });
 
-    this.test.onmessage(function(feedback) { 
-      this.setState({
-        feedback: feedback
-      }); 
-    }.bind(this));
+    this.test.onmessage((feedback) => { 
+      this.props.onMessage(feedback);
+    });
   },
   updateCode: function(code) {
     this.test.postMessage(code);
@@ -35,13 +31,11 @@ var App = React.createClass({
       lineNumbers: true,
       theme: 'base16-light'
     };
+
     return (
-      <div className='editor'>
-        <Codemirror mode='javascript' value={this.state.code} onChange={this.updateCode} options={options} />
-        <Feedback feedback={this.state.feedback} />
-      </div>
+      <Codemirror mode='javascript' value={this.state.code} onChange={this.updateCode} options={options} />
     );
   }
 });
 
-ReactDOM.render(<App />, document.getElementById('app'));
+module.exports = Editor;

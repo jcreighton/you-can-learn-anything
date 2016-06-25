@@ -1,14 +1,13 @@
 var webpack = require('webpack');
-// var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var path = require('path');
 var fs = require('fs');
 
 module.exports = {
   entry: [
-    './src/editor'
+    './src/app'
   ],
   output: {
-    filename: 'editor.js',
+    filename: 'app.js',
     publicPath: '/'
   },
 
@@ -21,25 +20,7 @@ module.exports = {
         query: { 
           presets: ['react', 'es2015']
         }
-      },
-      // {
-      //   test: /\.css$/,
-      //   exclude: /flexboxgrid|normalize\.css$/,
-      //   loaders: ['style-loader',
-      //   'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]']
-      // },
-      // {
-      //   test: /\.css$/,
-      //   include: /flexboxgrid|normalize\.css$/,
-      //   loaders: [
-      //     'style-loader',
-      //     'css-loader'
-      //   ]
-      // },
-      // {
-      //   test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-      //   loader: 'url-loader?limit=100000'
-      // }
+      }
     ]
   },
 
@@ -51,8 +32,14 @@ module.exports = {
   },
 
   plugins: [
-    // new webpack.optimize.ExtractTextPlugin()
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    })
   ],
+
+  devtool: 'cheap-module-source-map',
 
   node: {
     fs: 'empty'
@@ -60,5 +47,4 @@ module.exports = {
 
   cache: false,
 
-  // devtool: 'eval-source-map'
 };
