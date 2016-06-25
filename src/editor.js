@@ -1,28 +1,33 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Codemirror = require('react-codemirror');
+var Feedback = require('./feedback');
 require('codemirror/mode/javascript/javascript');
 
 var App = React.createClass({
   getInitialState: function() {
     return {
-      code: '// Code'
+      code: '// Code',
+      feedback: []
     };
   },
   componentDidMount: function() {
-    this.a = new Worker('worker.js');
-    this.a.onmessage = (b) => {
-      console.log('PARSED: ', Date.now(), JSON.parse(b.data))
+    this.test = new Test({
+      blacklist: ['WhileStatement', 'IfStatement'],
+      whitelist: ['ForStatement', 'VariableDeclaration'],
+      structure: null
+    });
+
+    this.test.onmessage(function(feedback) { 
       this.setState({
-        feedback: b.data
-      });
-    };
+        feedback: feedback
+      }); 
+    }.bind(this));
   },
-  updateCode: function(newCode) {
-    console.log('NEW CODE: ', newCode, JSON.stringify(newCode));
-    this.a.postMessage(newCode);
+  updateCode: function(code) {
+    this.test.postMessage(code);
     this.setState({
-      code: newCode,
+      code: code
     });
   },
   render: function() {
@@ -33,7 +38,7 @@ var App = React.createClass({
     return (
       <div className='editor'>
         <Codemirror mode='javascript' value={this.state.code} onChange={this.updateCode} options={options} />
-        <div className='feedback'>{this.state.feedback}</div>
+        <Feedback feedback={this.state.feedback} />
       </div>
     );
   }

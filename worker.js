@@ -1,6 +1,20 @@
-importScripts('esprima.js'); 
+importScripts('esprima.js', 'walk.js'); 
 
 self.addEventListener('message', function(code) {
-  var parsedCode = esprima.parse(code.data);
-  self.postMessage(JSON.stringify(parsedCode));
+  var AST = esprima.parse(code.data);
+
+  var types = {};
+  walk(AST, function(node) {
+    var type = node.type;
+    if (!types.hasOwnProperty(type)) {
+      types[type] = true;
+    } 
+  });
+
+  var output = {
+    AST: AST,
+    types: types
+  };
+
+  self.postMessage(JSON.stringify(output));
 }, false);

@@ -56,6 +56,7 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(39);
 	var Codemirror = __webpack_require__(169);
+	var Feedback = __webpack_require__(174);
 	__webpack_require__(173);
 
 	var App = React.createClass({
@@ -63,25 +64,27 @@
 
 	  getInitialState: function getInitialState() {
 	    return {
-	      code: '// Code'
+	      code: '// Code',
+	      feedback: []
 	    };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    var _this = this;
+	    this.test = new Test({
+	      blacklist: ['WhileStatement', 'IfStatement'],
+	      whitelist: ['ForStatement', 'VariableDeclaration'],
+	      structure: null
+	    });
 
-	    this.a = new Worker('worker.js');
-	    this.a.onmessage = function (b) {
-	      console.log('PARSED: ', Date.now(), JSON.parse(b.data));
-	      _this.setState({
-	        feedback: b.data
+	    this.test.onmessage(function (feedback) {
+	      this.setState({
+	        feedback: feedback
 	      });
-	    };
+	    }.bind(this));
 	  },
-	  updateCode: function updateCode(newCode) {
-	    console.log('NEW CODE: ', newCode, JSON.stringify(newCode));
-	    this.a.postMessage(newCode);
+	  updateCode: function updateCode(code) {
+	    this.test.postMessage(code);
 	    this.setState({
-	      code: newCode
+	      code: code
 	    });
 	  },
 	  render: function render() {
@@ -93,11 +96,7 @@
 	      'div',
 	      { className: 'editor' },
 	      React.createElement(Codemirror, { mode: 'javascript', value: this.state.code, onChange: this.updateCode, options: options }),
-	      React.createElement(
-	        'div',
-	        { className: 'feedback' },
-	        this.state.feedback
-	      )
+	      React.createElement(Feedback, { feedback: this.state.feedback })
 	    );
 	  }
 	});
@@ -30606,6 +30605,35 @@
 
 	});
 
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var React = __webpack_require__(2);
+
+	var Feedback = React.createClass({
+	  displayName: 'Feedback',
+
+	  render: function render() {
+	    return React.createElement(
+	      'ul',
+	      { className: 'feedback' },
+	      this.props.feedback.map(function (feedback, i) {
+	        var key = Object.keys(feedback);
+	        return React.createElement(
+	          'li',
+	          { className: key, key: i },
+	          feedback[key]
+	        );
+	      })
+	    );
+	  }
+	});
+
+	module.exports = Feedback;
 
 /***/ }
 /******/ ]);
