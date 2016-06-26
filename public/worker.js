@@ -27,6 +27,8 @@ self.addEventListener('message', function(message) {
     }
   }, this);
 
+  // check structure
+
   var output = {
     feedback: feedback
   };
