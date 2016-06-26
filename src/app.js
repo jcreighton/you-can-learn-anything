@@ -1,28 +1,27 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Editor = require('./editor');
+var EditorWithTests = require('./editorWithTests')(Editor);
 var Feedback = require('./feedback');
 
 var App = React.createClass({
   getInitialState: function() {
     return {
-      code: '// Let\'s build something new!',
       feedback: [],
-      blacklist: ['WhileStatement', 'IfStatement'],
-      whitelist: ['ForStatement', 'VariableDeclaration'],
+      blacklist: ['IfStatement'],
+      whitelist: ['ForStatement', 'WhileStatement', 'VariableDeclaration'],
       structure: null
     };
   },
   updateFeedback: function(feedback) {
-    console.log('FEEDBACK: ', feedback);
     this.setState({
-      feedback: feedback
+      feedback
     }); 
   },
   render: function() {  
     return (
       <div className='editor'>
-        <Editor onMessage={this.updateFeedback} {...this.state} />
+        <EditorWithTests onMessage={this.updateFeedback} {...this.state} />
         <Feedback feedback={this.state.feedback} />
       </div>
     );

@@ -58,6 +58,7 @@
 	var React = __webpack_require__(2);
 	var ReactDOM = __webpack_require__(35);
 	var Editor = __webpack_require__(165);
+	var EditorWithTests = __webpack_require__(171)(Editor);
 	var Feedback = __webpack_require__(172);
 
 	var App = React.createClass({
@@ -65,15 +66,13 @@
 
 	  getInitialState: function getInitialState() {
 	    return {
-	      code: '// Let\'s build something new!',
 	      feedback: [],
-	      blacklist: ['WhileStatement', 'IfStatement'],
-	      whitelist: ['ForStatement', 'VariableDeclaration'],
+	      blacklist: ['IfStatement'],
+	      whitelist: ['ForStatement', 'WhileStatement', 'VariableDeclaration'],
 	      structure: null
 	    };
 	  },
 	  updateFeedback: function updateFeedback(feedback) {
-	    console.log('FEEDBACK: ', feedback);
 	    this.setState({
 	      feedback: feedback
 	    });
@@ -82,13 +81,13 @@
 	    return React.createElement(
 	      'div',
 	      { className: 'editor' },
-	      React.createElement(Editor, _extends({ onMessage: this.updateFeedback }, this.state)),
+	      React.createElement(EditorWithTests, _extends({ onMessage: this.updateFeedback }, this.state)),
 	      React.createElement(Feedback, { feedback: this.state.feedback })
 	    );
 	  }
 	});
 
-		ReactDOM.render(React.createElement(App, null), document.getElementById('app'));
+	ReactDOM.render(React.createElement(App, null), document.getElementById('app'));
 
 /***/ },
 /* 2 */
@@ -19967,46 +19966,21 @@
 	var React = __webpack_require__(2);
 	var Codemirror = __webpack_require__(166);
 	__webpack_require__(170);
-	var Test = __webpack_require__(171);
 
 	var Editor = React.createClass({
 	  displayName: 'Editor',
 
-	  getInitialState: function getInitialState() {
-	    return {
-	      code: '// Let\'s build something new!'
-	    };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    var _this = this;
-
-	    this.test = new Test({
-	      blacklist: this.props.blacklist,
-	      whitelist: this.props.whitelist,
-	      structure: this.props.structure
-	    });
-
-	    this.test.onmessage(function (feedback) {
-	      _this.props.onMessage(feedback);
-	    });
-	  },
-	  updateCode: function updateCode(code) {
-	    this.test.postMessage(code);
-	    this.setState({
-	      code: code
-	    });
-	  },
 	  render: function render() {
 	    var options = {
 	      lineNumbers: true,
 	      theme: 'base16-light'
 	    };
 
-	    return React.createElement(Codemirror, { mode: 'javascript', value: this.state.code, onChange: this.updateCode, options: options });
+	    return React.createElement(Codemirror, { mode: 'javascript', value: this.props.code, onChange: this.props.onChange, options: options });
 	  }
 	});
 
-		module.exports = Editor;
+	module.exports = Editor;
 
 /***/ },
 /* 166 */
@@ -30220,81 +30194,101 @@
 
 /***/ },
 /* 171 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Test = function Test(options) {
-	  this.worker = new Worker('worker.js');
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-	  this.whitelist = options.whitelist;
-	  this.blacklist = options.blacklist;
-	  this.structure = options.structure;
-	};
+	var React = __webpack_require__(2);
 
-	Test.prototype.postMessage = function (message) {
-	  this.worker.postMessage(message);
-	};
+	function editorWithTests(Editor) {
+	  return React.createClass({
+	    getInitialState: function getInitialState() {
+	      return {
+	        code: '// Let\'s build something new!'
+	      };
+	    },
+	    getDefaultProps: function getDefaultProps() {
+	      return {
+	        whitelist: [],
+	        blacklist: [],
+	        structure: null
+	      };
+	    },
+	    componentDidMount: function componentDidMount() {
+	      this.startWorker();
+	    },
+	    startWorker: function startWorker() {
+	      var _this = this;
 
-	Test.prototype.onmessage = function (callback) {
-	  return this.worker.onmessage = function (message) {
-	    var data = JSON.parse(message.data);
-	    var feedback = this.feedback(data.AST, data.types);
-	    callback(feedback);
-	  }.bind(this);
-	};
+	      this.worker = new Worker('worker.js');
 
-	Test.prototype.structure = function () {
-	  console.log('structure');
-	};
+	      this.worker.onmessage = function (message) {
+	        var data = JSON.parse(message.data);
+	        var feedback = data.feedback;
+	        _this.props.onMessage(feedback);
+	      };
+	    },
+	    terminateWorker: function terminateWorker() {
+	      this.worker.terminate();
+	    },
+	    postMessage: function postMessage(message) {
+	      this.worker.postMessage(message);
+	    },
+	    updateCode: function updateCode(code) {
+	      var _props = this.props;
+	      var blacklist = _props.blacklist;
+	      var whitelist = _props.whitelist;
+	      var structure = _props.structure;
 
-	Test.prototype.blacklist = function (list) {
-	  console.log('backlist');
-	};
 
-	Test.prototype.feedback = function (AST, types) {
-	  var feedback = [];
+	      this.postMessage({
+	        code: code,
+	        blacklist: blacklist,
+	        whitelist: whitelist,
+	        structure: structure
+	      });
 
-	  var keys = Object.keys(types);
-	  keys.forEach(function (key) {
-	    if (this.blacklist.indexOf(key) >= 0) {
-	      feedback.push({ error: key });
+	      this.setState({
+	        code: code
+	      });
+	    },
+	    render: function render() {
+	      return React.createElement(Editor, _extends({ onChange: this.updateCode }, this.state, this.props));
 	    }
+	  });
+	}
 
-	    if (this.whitelist.indexOf(key) >= 0) {
-	      feedback.push({ valid: key });
-	    }
-	  }, this);
-
-	  return feedback;
-	};
-
-	Test.prototype.terminate = function () {
-	  // Terminate worker
-	};
-
-	module.exports = Test;
+	module.exports = editorWithTests;
 
 /***/ },
 /* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	var React = __webpack_require__(2);
 
 	var Feedback = React.createClass({
-	  displayName: 'Feedback',
+	  displayName: "Feedback",
 
 	  render: function render() {
+	    var emoji = {
+	      valid: React.createElement("i", { className: "em em-ok_hand" }),
+	      error: React.createElement("i", { className: "em em-open_mouth" }),
+	      structure: React.createElement("i", { className: "em em-muscle" })
+	    };
+
 	    return React.createElement(
-	      'ul',
-	      { className: 'feedback' },
+	      "ul",
+	      { className: "feedback" },
 	      this.props.feedback.map(function (feedback, i) {
 	        var key = Object.keys(feedback);
 	        return React.createElement(
-	          'li',
+	          "li",
 	          { className: key, key: i },
+	          emoji[key],
 	          feedback[key]
 	        );
 	      })
@@ -30302,8 +30296,7 @@
 	  }
 	});
 
-		module.exports = Feedback;
+	module.exports = Feedback;
 
 /***/ }
 /******/ ]);
-//# sourceMappingURL=app.js.map

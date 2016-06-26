@@ -1,7 +1,11 @@
 importScripts('esprima.js', 'walk.js'); 
 
-self.addEventListener('message', function(code) {
-  var AST = esprima.parse(code.data);
+self.addEventListener('message', function(message) {
+  var data = message.data;
+  var whitelist = data.whitelist;
+  var blacklist = data.blacklist;
+  var structure = data.structure;
+  var AST = esprima.parse(data.code);
 
   var types = {};
   walk(AST, function(node) {
@@ -11,9 +15,20 @@ self.addEventListener('message', function(code) {
     } 
   });
 
+  var feedback = [];
+  var keys = Object.keys(types);
+  keys.forEach(function(key) {
+    if (blacklist.indexOf(key) >= 0) {
+      feedback.push({error: key});
+    }
+
+    if (whitelist.indexOf(key) >= 0) {
+      feedback.push({valid: key});
+    }
+  }, this);
+
   var output = {
-    AST: AST,
-    types: types
+    feedback: feedback
   };
 
   self.postMessage(JSON.stringify(output));
