@@ -3,6 +3,7 @@ var path = require('path');
 var fs = require('fs');
 
 var Visualizer = require('webpack-visualizer-plugin');
+var nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   entry: [
@@ -45,6 +46,9 @@ module.exports = {
   node: {
     fs: 'empty'
   },
+
+  target: 'node',
+  externals: [nodeExternals()],
 
   cache: false,
 
