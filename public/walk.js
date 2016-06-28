@@ -28,6 +28,7 @@ function walk( ast, fn ) {
   }
 }
 
+
 walk.walk = walk
 
 walk.walkAddParent = function ( ast, fn ) {

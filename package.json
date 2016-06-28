@@ -1,8 +1,11 @@
 {
-  "name": "You Can Learn Anything",
+  "name": "YouCanLearnAnything",
   "author": "Jenn Creighton",
   "repository": "https://github.com/jcreighton/you-can-learn-anything",
-  "scripts": {},
+  "scripts": {
+    "build": "webpack --watch",
+    "start": "node server.js"
+  },
   "dependencies": {
     "express": "^4.14.0",
     "react": "^15.1.0",

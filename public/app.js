@@ -69,7 +69,7 @@
 	      feedback: [],
 	      blacklist: ['IfStatement'],
 	      whitelist: ['ForStatement', 'WhileStatement', 'VariableDeclaration'],
-	      structure: null
+	      structure: 'while (_) { if (_) {} }'
 	    };
 	  },
 	  updateFeedback: function updateFeedback(feedback) {
@@ -30227,6 +30227,7 @@
 	      this.worker.onmessage = function (message) {
 	        var data = JSON.parse(message.data);
 	        var feedback = data.feedback;
+	        console.log('FEEDBACK: ', feedback);
 	        _this.props.onMessage(feedback);
 	      };
 	    },
@@ -30250,12 +30251,15 @@
 	        structure: structure
 	      });
 
+	      console.log('WWWWHHHAAATTT', structure);
+
 	      this.setState({
 	        code: code
 	      });
 	    },
 	    render: function render() {
-	      return React.createElement(Editor, _extends({ onChange: this.updateCode }, this.state, this.props));
+	      console.log(this.props.structure);
+	      return React.createElement(Editor, _extends({ onChange: this.updateCode }, this.props, this.state));
 	    }
 	  });
 	}

@@ -10,7 +10,7 @@ var App = React.createClass({
       feedback: [],
       blacklist: ['IfStatement'],
       whitelist: ['ForStatement', 'WhileStatement', 'VariableDeclaration'],
-      structure: null
+      structure: 'while (_) { if (_) {} }'
     };
   },
   updateFeedback: function(feedback) {

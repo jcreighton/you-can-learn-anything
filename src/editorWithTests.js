@@ -23,6 +23,7 @@ function editorWithTests(Editor) {
       this.worker.onmessage = (message) => { 
         var data = JSON.parse(message.data);
         var feedback = data.feedback;
+        console.log('FEEDBACK: ', feedback)
         this.props.onMessage(feedback);
       };
     },
@@ -42,12 +43,15 @@ function editorWithTests(Editor) {
         structure
       });
 
+      console.log('WWWWHHHAAATTT', structure);
+
       this.setState({
         code: code
       });
     },
     render: function() {
-      return <Editor onChange={this.updateCode} {...this.state} {...this.props} />;
+      console.log(this.props.structure);
+      return <Editor onChange={this.updateCode} {...this.props} {...this.state} />;
     }
   });
 }
