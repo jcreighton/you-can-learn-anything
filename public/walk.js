@@ -29,47 +29,34 @@ function walk( ast, fn ) {
 }
 
 
-walk.walk = walk
+function walkStructure( ast, structure ) {
 
-walk.walkAddParent = function ( ast, fn ) {
-
-  var stack = [ ast ], i, j, key, len, node, child, subchild
+  var stack = [ ast ], i, j, key, len, node1, node2, child1, child2
 
   for ( i = 0; i < stack.length; i += 1 ) {
 
     node = stack[ i ]
 
-    fn( node )
+    if (node.type !== structure[i]) {
+      return false;
+    }
 
     for ( key in node ) {
 
-      if ( key !== 'parent' ) {
-        
-        child = node[ key ]
+      child = node[ key ]
 
-        if ( child instanceof Array ) {
+      if ( child instanceof Array ) {
 
-          for ( j = 0, len = child.length; j < len; j += 1 ) {
-
-            subchild = child[ j ]
-
-            if( subchild instanceof Object ) {
-
-              subchild.parent = node
-
-            }
-
-            stack.push( subchild )
-
-          }
-
-        } else if ( child != void 0 && typeof child.type === 'string' ) {
-
-          child.parent = node
-
-          stack.push( child )
+        for ( j = 0, len = child.length; j < len; j += 1 ) {
+          stack.push( child[ j ] )
         }
+
+      } else if ( child != void 0 && typeof child.type === 'string' ) {
+
+        stack.push( child )
       }
     }
   }
+
+  return true;
 }

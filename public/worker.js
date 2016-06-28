@@ -9,15 +9,7 @@ self.addEventListener('message', function(message) {
   var types = {};
   var feedback = [{structure: structure.body[0].type}];
 
-  var types2 = {};
-  walk(structure.body[0], function(node) {
-    var type = node.type;
-    if (!types2.hasOwnProperty(type)) {
-      types2[type] = true;
-    } 
-  });
 
-  feedback.push({structure: Object.keys(types2)});
 
   walk(code, function(node) {
     var type = node.type;
@@ -26,27 +18,10 @@ self.addEventListener('message', function(message) {
     } 
 
     if (type === structure.body[0].type) {
-      checkStructure(node);
+      walkStructure();
+      feedback.push({structure: 
     }
   });
-
-  function checkStructure(node, structureTypes) {
-    var nodeTypes = {};
-    walk(node, function(node) {
-      var type = node.type;
-      if (!nodeTypes.hasOwnProperty(type)) {
-        nodeTypes[type] = true;
-      } 
-    });
-
-    var nodeStructure = Object.keys(nodeTypes).join();
-
-    if () {
-
-    }
-
-    feedback.push({structure: Object.keys(types3).join() === Object.keys(types2).join() ? 'YAYS' : 'NO'});
-  }
 
   var keys = Object.keys(types);
   keys.forEach(function(key) {

@@ -2,6 +2,8 @@ var webpack = require('webpack');
 var path = require('path');
 var fs = require('fs');
 
+var Visualizer = require('webpack-visualizer-plugin');
+
 module.exports = {
   entry: [
     './src/app'
@@ -36,7 +38,8 @@ module.exports = {
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
-    })
+    }),
+    new Visualizer()
   ],
 
   node: {
