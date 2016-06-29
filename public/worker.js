@@ -1,25 +1,37 @@
 importScripts('esprima.js', 'walk.js'); 
 
+var structure = [];
+
 self.addEventListener('message', function(message) {
   var data = message.data;
   var whitelist = data.whitelist;
   var blacklist = data.blacklist;
-  var structure = esprima.parse(data.structure);
   var code = esprima.parse(data.code);
+
+  if (structure.length <= 0) {
+    walk(esprima.parse(data.structure), function(node) {
+      var type = node.type;
+      if (type) {
+        structure.push(type);
+      } 
+    });
+
+    structure.shift();
+  }
+
   var types = {};
-  var feedback = [{structure: structure.body[0].type}];
-
-
-
+  var feedback = [];
   walk(code, function(node) {
     var type = node.type;
     if (!types.hasOwnProperty(type)) {
       types[type] = true;
     } 
 
-    if (type === structure.body[0].type) {
-      walkStructure();
-      feedback.push({structure: 
+    if (type === structure[0]) {
+      var isCorrectStructure = walkStructure(node, structure);
+      if (isCorrectStructure) {
+        feedback.push({structure: 'CorrectStructure'});
+      }
     }
   });
 
@@ -34,7 +46,6 @@ self.addEventListener('message', function(message) {
     }
   }, this);
 
-  // Check structure
 
   var output = {
     feedback: feedback

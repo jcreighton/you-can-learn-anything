@@ -31,7 +31,7 @@ function walk( ast, fn ) {
 
 function walkStructure( ast, structure ) {
 
-  var stack = [ ast ], i, j, key, len, node1, node2, child1, child2
+  var stack = [ ast ], i, j, key, len, node, child
 
   for ( i = 0; i < stack.length; i += 1 ) {
 
@@ -58,5 +58,5 @@ function walkStructure( ast, structure ) {
     }
   }
 
-  return true;
+  return (stack.length === structure.length);
 }

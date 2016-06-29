@@ -28,9 +28,7 @@ module.exports = {
   },
 
   resolve: {
-    root: [
-      path.join(__dirname, 'node_modules')
-    ],
+    modulesDirectories: ['node_modules'],
     extensions: ['', '.js']
   },
 
@@ -48,7 +46,10 @@ module.exports = {
   },
 
   target: 'node',
-  externals: [nodeExternals()],
+
+  // externals: [nodeExternals({
+  //   whitelist: ['react', 'react-dom']
+  // })],
 
   cache: false,
 
