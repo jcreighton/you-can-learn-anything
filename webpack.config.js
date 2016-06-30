@@ -2,9 +2,6 @@ var webpack = require('webpack');
 var path = require('path');
 var fs = require('fs');
 
-var Visualizer = require('webpack-visualizer-plugin');
-var nodeExternals = require('webpack-node-externals');
-
 module.exports = {
   entry: [
     './src/app'
@@ -32,24 +29,11 @@ module.exports = {
     extensions: ['', '.js']
   },
 
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
-    }),
-    new Visualizer()
-  ],
-
   node: {
     fs: 'empty'
   },
 
   target: 'node',
-
-  // externals: [nodeExternals({
-  //   whitelist: ['react', 'react-dom']
-  // })],
 
   cache: false,
 
