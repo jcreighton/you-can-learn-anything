@@ -16,6 +16,15 @@ function editorWithTests(Editor) {
     },
     componentDidMount: function() {
       this.startWorker();
+
+      var { blacklist, whitelist, structure, code } = this.props;
+
+      this.postMessage({
+        code,
+        blacklist,
+        whitelist,
+        structure
+      });
     },
     startWorker: function() {
       this.worker = new Worker('worker.js');
@@ -30,10 +39,11 @@ function editorWithTests(Editor) {
       this.worker.terminate();
     },
     postMessage: function(message) {
+      console.log('postMessage ', message);
       this.worker.postMessage(message);
     },
     updateCode: function(code) {
-      var { blacklist, whitelist, structure } = this.props;
+      var { blacklist, whitelist, structure, onChange } = this.props;
 
       this.postMessage({
         code,
@@ -42,12 +52,13 @@ function editorWithTests(Editor) {
         structure
       });
 
-      this.setState({
-        code: code
-      });
+      if (onChange) {
+        onChange(code);
+      }
     },
     render: function() {
-      return <Editor onChange={this.updateCode} {...this.props} {...this.state} />;
+      console.log('i am rendering');
+      return <Editor {...this.props} onChange={this.updateCode} />;
     },
     componentWillUnmount() {
       this.terminateWorker();

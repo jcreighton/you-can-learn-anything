@@ -1,5 +1,47 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+  height: 60px;
+  background-color: #f5f5f5;
+  border-bottom: 3px solid #ac4142;
+}
+
+.options button {
+  height: 40px;
+  width: 140px;
+  font-family: monospace;
+  font-size: 12px;
+  background-color: tomato;
+  border: none;
+  margin: 10px;
+}
+
 .editor {
   display: flex;
+}
+
+.example-enter {
+  transform: translateX(100%);
+}
+
+.example-enter.example-enter-active {
+  transform: translateX(0);
+  transition: opacity 200ms ease-in;
+}
+
+.example-leave {
+  transform: translateX(0);
+}
+
+.example-leave.example-leave-active {
+  transform: translateX(100%);
+  transition: opacity 200ms ease-in;
 }
 
 .feedback {  

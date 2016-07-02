@@ -7,6 +7,7 @@ self.addEventListener('message', function(message) {
   var whitelist = data.whitelist;
   var blacklist = data.blacklist;
   var code = esprima.parse(data.code);
+  console.log('am i working? ', message);
 
   if (structure.length <= 0) {
     walk(esprima.parse(data.structure), function(node) {
