@@ -55,4 +55,10 @@ var App = React.createClass({
   }
 });
 
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(
+  <div>
+    <h1>🕵️‍♀️</h1>
+    <p>Searching for clues.</p>
+  </div>,
+  document.getElementById('container')
+);
